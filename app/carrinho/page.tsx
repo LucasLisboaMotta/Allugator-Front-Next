@@ -1,6 +1,8 @@
 'use client';
 
 import ShoppingCart, { ICartProduct } from "@/connections/storage/ShoppingCart";
+import ConvertStringMoney from "@/helper/money/ConvertStringMoney";
+import ShoppingCartStyled, { ShoppingCartItemStyled } from "@/styled/ShoppingCartStyled";
 import { useEffect, useState } from "react";
 
 export default function Carrinho() {
@@ -22,23 +24,43 @@ export default function Carrinho() {
         }
     }
 
+    const totalValue = products.reduce((total, item) => {
+        const value = parseFloat(item.product.annualValue.replace(/[^0-9.-]+/g,""));
+        return total + value * item.quantity;
+    }, 0);
+
     return (
-        <div>
+        <ShoppingCartStyled>
             <h1>Carrinho</h1>
             {products.length === 0 ? (
                 <p>O carrinho está vazio</p>
             ) : (
                 <ul>
-                    {products.map(({ product, quantity }) => (
+                    {products.map(({ product, quantity }) => {
+                        const unitValue = parseFloat(product.annualValue.replace(/[^0-9.-]+/g, ""));
+                        const subtotal = unitValue * quantity;
+                        return (
                         <li key={product.id}>
-                            {product.name} - Quantidade: {quantity}
-                            <img src={product.photos ? product.photos[0] : ''} alt={product.name} width={100} height={100} />
-                            <button onClick={() => buttonCartClick(product.id, true)}>+</button>
-                            <button onClick={() => buttonCartClick(product.id, false)}>-</button>
+                            <ShoppingCartItemStyled>
+                                <img src={product.photos ? product.photos[0] : ''} alt={product.name} width={100} height={100} />
+                                <div className="content">
+                                    <h2>{product.name}</h2>
+                                    <div className="bottom">
+                                        <span>Quantidade: {quantity}</span>
+                                        <span className="subtotal">Subtotal: R$ {ConvertStringMoney(subtotal.toFixed(2))}</span>
+                                        <div className="actions">
+                                            <button className="remove" onClick={() => buttonCartClick(product.id, false)}>-</button>
+                                            <button className="add" onClick={() => buttonCartClick(product.id, true)}>+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ShoppingCartItemStyled>
                         </li>
-                    ))}
+                        );
+                    })}
                 </ul>
             )}
-        </div>
+            <h2>Total: R$ {ConvertStringMoney(totalValue.toFixed(2))}</h2>
+        </ShoppingCartStyled>
     )
 }
