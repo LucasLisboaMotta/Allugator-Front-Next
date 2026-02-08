@@ -1,5 +1,5 @@
 import { Header } from "@/components/header";
-import "./globals.css";
+import LayoutStyled, { CenterBodyStyled } from "@/styled/LayoutStyled";
 
 export default function RootLayout({
   children,
@@ -8,12 +8,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className="antialiased"
-      >
+      <LayoutStyled>
         <Header />
-        {children}
-      </body>
+        <CenterBodyStyled>
+          {children}
+        </CenterBodyStyled>
+      </LayoutStyled>
     </html>
   );
 }

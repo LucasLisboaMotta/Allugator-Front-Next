@@ -1,12 +1,13 @@
+import HeaderStyled from "@/styled/HeaderStyled";
 import Search from "./search";
+import Link from "next/link";
 
 export function Header() {
     return (
-        <header>
-            <h1>Header</h1>
-            <a href="/produtos">Produtos</a>
-            <a href="/carrinho">Carrinho</a>
+        <HeaderStyled>
+            <Link href="/produtos">Produtos</Link>
             <Search />
-        </header>
+            <Link href="/carrinho">Carrinho</Link>
+        </HeaderStyled>
     )
 }
