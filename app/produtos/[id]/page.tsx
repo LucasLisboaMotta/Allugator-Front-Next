@@ -1,7 +1,14 @@
 'use client';
 
-import Product, { IProduct } from "@/connections/api/Product";
+import ProductAPI, { IProduct } from "@/connections/api/ProductAPI";
 import ShoppingCart from "@/connections/storage/ShoppingCart";
+import ConvertStringMoney from "@/helper/money/ConvertStringMoney";
+import {
+    ProductDetailCarouselButtonsStyled,
+    ProductDetailCarouselStyled,
+    ProductDetailCartStyled,
+    ProductDetailStyled
+    } from "@/styled/ProductStyled";
 import {useParams} from 'next/navigation'
 import { useEffect, useMemo, useState } from "react";
 
@@ -13,7 +20,7 @@ export default function ProdutoId() {
 
     useEffect(() => {
         if (!id) return;
-        Product.getById(id)
+        ProductAPI.getById(id)
             .then(data => {
                 setProduct(data);
                 setCurrentPhotoIndex(0);
@@ -51,27 +58,25 @@ export default function ProdutoId() {
     if (!product) return <div>Product not found</div>;
 
     return (
-        <div>
+        <ProductDetailStyled>
             <h1>{product.name}</h1>
             <p>{product.technicalDetails}</p>
-            <p>{product.annualValue}</p>
-
+            <p>R$: {ConvertStringMoney(product.annualValue)}</p>
             {photos.length > 0 ? (
-                <div>
+                <ProductDetailCarouselStyled>
+
                     <div>
-                        <button type="button" onClick={handlePrev} aria-label="Foto anterior">
-                            ◀
-                        </button>
                         <img
                             src={photos[currentPhotoIndex]}
                             alt={`${product.name} photo ${currentPhotoIndex + 1}`}
                             width={360}
                             height={360}
                         />
-                        <button type="button" onClick={handleNext} aria-label="Próxima foto">
-                            ▶
-                        </button>
                     </div>
+                    <ProductDetailCarouselButtonsStyled>
+                        <button type="button" onClick={handlePrev} aria-label="Foto anterior">
+                            ◀
+                        </button>
                     <div>
                         {photos.map((photo, index) => (
                             <button
@@ -89,24 +94,29 @@ export default function ProdutoId() {
                             </button>
                         ))}
                     </div>
-                </div>
+                    <button type="button" onClick={handleNext} aria-label="Próxima foto">
+                            ▶
+                    </button>
+                    </ProductDetailCarouselButtonsStyled>
+                </ProductDetailCarouselStyled>
             ) : (
                 <p>Sem fotos disponíveis.</p>
             )}
-
-            <div>
-                <button type="button" onClick={() => buttonClick(true)}>
-                    Adicionar ao carrinho
-                </button>
-            </div>
-            <div>
-                {countCart} {countCart   === 1 ? 'item' : 'itens'} no carrinho
-            </div>
-            <div>
-                <button type="button" onClick={() => buttonClick(false)}>
-                    Remover do carrinho
-                </button>
-            </div>
-        </div>
+            <ProductDetailCartStyled>
+               <div>
+                    <button type="button" onClick={() => buttonClick(false)}>
+                        Remover do carrinho
+                    </button>
+                </div>
+                <div>
+                    {countCart} {countCart   === 1 ? 'item' : 'itens'} no carrinho
+                </div>
+                <div>
+                    <button type="button" onClick={() => buttonClick(true)}>
+                        Adicionar ao carrinho
+                    </button>
+                </div>
+            </ProductDetailCartStyled>
+        </ProductDetailStyled>
     );
 }
