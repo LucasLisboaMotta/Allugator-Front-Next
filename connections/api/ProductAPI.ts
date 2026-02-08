@@ -6,7 +6,7 @@ export interface IProduct {
   photos: string[],
 }
 
-class Product {
+class ProductAPI {
     protected baseUrl = 'http://localhost:3001/user/product';
 
     getAll = async ({search, page, limit}: {search?: string, page: number, limit: number}): Promise<IProduct[]> => {
@@ -35,4 +35,4 @@ class Product {
     };
 }
 
-export default new Product();
+export default new ProductAPI();

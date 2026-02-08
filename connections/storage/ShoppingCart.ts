@@ -1,4 +1,4 @@
-import { IProduct } from "../api/Product";
+import { IProduct } from "../api/ProductAPI";
 
 export interface ICartProduct {
     product: IProduct,

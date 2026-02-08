@@ -3,24 +3,27 @@
 import { useEffect, useState  } from "react"
 import { useSearchParams } from 'next/navigation'
 import InfiniteScroll from "react-infinite-scroll-component"
-import Product, { IProduct } from "../../connections/api/Product"
+import ProductAPI, { IProduct } from "../../connections/api/ProductAPI"
+import { ProductComponent } from "@/components/product/ProductComponet"
+import { ProductBoxStyled } from "@/styled/ProductStyled"
 
 export default function Produtos() {
     const searchParams = useSearchParams()
+    const productByPage = 5;
     const search = searchParams.get('search') || '';
     const [products, setProducts] = useState<IProduct[]>([]);
     const [hasMore, setHasMore] = useState(true);
     useEffect(() => {
-        Product.getAll({search, page: 1, limit: 5})
+        ProductAPI.getAll({search, page: 1, limit: productByPage})
             .then(data => setProducts(data));
     }, [])
     useEffect(() => {
-        Product.getAll({search, page: 1, limit: 5})
+        ProductAPI.getAll({search, page: 1, limit: productByPage})
             .then(data => setProducts(data));
     }, [search])
     const fetchData = async () => {
-        const countNextProducts =  products.length + 5;
-             fetchProducts({search, page: 1, limit: countNextProducts})
+        const countNextProducts =  products.length + productByPage;
+              ProductAPI.getAll({search, page: 1, limit: countNextProducts})
             .then(data => {
                  if (data.length < countNextProducts) {
                 setHasMore(false)
@@ -46,16 +49,13 @@ export default function Produtos() {
                 <h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>
             }
         >
-            {products.map(product => (
-                <div key={`product-all-${product.id}`}>
-                    <a href={`/produtos/${product.id}`}>
-                    <h2>{product.name}</h2>
-                    {/* <p>{product.technicalDetails}</p> */}
-                    <p>{product.annualValue}</p>
-                    <img src={product.photos[0]} alt={product.name} width={200} height={200} />
-                    </a>
-                </div>
-            ))}
+            <ProductBoxStyled>
+            {
+                products.map(product => (
+                    <ProductComponent key={`product-all-${product.id}`} product={product} />
+                ))
+            }
+            </ProductBoxStyled>
         </InfiniteScroll>
     )
 }
